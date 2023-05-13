@@ -4,7 +4,7 @@ Defines the base model
 """
 from uuid import uuid4
 from datetime import datetime
-from models import storage
+import models
 
 class BaseModel:
     def __init__(self, *args, **kwargs):
@@ -27,8 +27,8 @@ class BaseModel:
                     self.__dict__[key] = value
         else:
             ##
-            print("else")
-            storage.new(self)
+            # print("else")
+            models.storage.new(self)
 
     def __str__(self):
         classname = self.__class__.__name__
@@ -36,9 +36,8 @@ class BaseModel:
 
 
     def save(self):
-        self.updated_at = datetime.now()
-        # save 
-        storage.save()
+        self.updated_at = datetime.now() 
+        models.storage.save()
 
     def to_dict(self):
         """

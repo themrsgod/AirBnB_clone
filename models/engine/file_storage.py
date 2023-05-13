@@ -1,4 +1,5 @@
 import json
+from models.base_model import BaseModel
 
 class FileStorage:
     """
@@ -28,7 +29,11 @@ class FileStorage:
         try:
             with  open(FileStorage.__file_path, "r") as file_opened:
                 object_dictionary = json.load(file_opened)
+                for o in object_dictionary.values():
+                    classname = o["__class__"]
+                    #self.new(eval(classname)(**o))
 
-        except Exception:
+        except FileNotFoundError:
+            print('Exception occured')
             return
 
