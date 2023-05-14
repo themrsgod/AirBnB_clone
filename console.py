@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+"""Defines the HBnB console."""
 import cmd
 import sys
 import inspect
@@ -168,8 +168,21 @@ def process_argument(some_arg):
     """
     Parses the user input and returns the arguments as a list
     """
-    args = split(some_arg)
-    return args
+    curly_braces = re.search(r"\{(.*?)\}", some_arg)
+    brackets = re.search(r"\[(.*?)\]", some_arg)
+    if curly_braces is None:
+        if brackets is None:
+            return [i.strip(",") for i in split(some_arg)]
+        else:
+            lexer = split(some_arg[:brackets.span()[0]])
+            result = [i.strip(",") for i in lexer]
+            result.append(brackets.group())
+            return result
+    else:
+        lexer = split(some_arg[:curly_braces.span()[0]])
+        result = [i.strip(",") for i in lexer]
+        result.append(curly_braces.group())
+        return result
 
 
 if __name__ == '__main__':
