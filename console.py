@@ -8,29 +8,27 @@ from shlex import split
 
 class HBNBCommand(cmd.Cmd):
     """
-    contains the entry point of the command interpreter
+    Represents the command-line interface of the program
+
+    This class defines a command-line interface for a program that manages objects of different classes.
     """
 
+    # Define the prompt string for the command-line interface
     prompt = "(hbnb) "
 
-    def classes(self):
-        self.our_classes.clear()
-        # get all modules in current package
-        current_module = sys.modules[__name__]
-        # loop over the modules
-        for name, obj in inspect.getmembers(sys.modules[__name__]):
-            if inspect.isclass(obj):  # check if its a class
-                self.our_classes.append(str(obj))
-                # save to out classes list
-
     def default(self, some_args):
+        """
+        This method is called when a command is not recognized.
+
+        This method lists all available classes in the program, allowing the user to choose one to operate on.
+        """
         self.our_classes = []
         self.classes()
 
     def do_create(self, some_arg):
         """
-        create: Creates a new instance of BaseModel, 
-        saves it (to the JSON file) and prints the id. Ex: $ create BaseModel
+        Creates a new instance of BaseModel and saves it (to the JSON file) with a new id.
+        Ex: create BaseModel
         """
         argument = process_argument(some_arg)
         if len(argument) == 0:
@@ -45,8 +43,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, some_arg):
         """
-        show: Prints the string representation of an instance 
-        based on the class name and id
+        Prints the string representation of an instance based on the class name and id.
+        Ex: show BaseModel 1234-1234-1234
         """
         argument = process_argument(some_arg)
         if len(argument) == 0:
@@ -65,8 +63,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, some_arg):
         """
-        destroy: Deletes an instance based on the class name and id 
-        (save the change into the JSON file)
+        Deletes an instance based on the class name and id (saves the change into the JSON file).
+        Ex: destroy BaseModel 1234-1234-1234
         """
         argument = process_argument(some_arg)
         if len(argument) == 0:
@@ -86,8 +84,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, some_arg):
         """
-        all: Prints all string representation of all instances 
-        based or not on the class name.
+        Prints all string representations of all instances based or not on the class name.
+        Ex: all BaseModel or all
         """
         argument = process_argument(some_arg)
         if len(argument) == 0:
@@ -101,6 +99,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, some_arg):
         """
         Updates an instance based on the class name and id by adding or updating attribute.
+        Ex: update BaseModel 1234-1234-1234 email "aibnb@holbertonschool.com"
         """
         argument = process_argument(some_arg)
         object_dictionary = storage.all()
@@ -138,19 +137,37 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
 
     def do_quit(self, some_arg):
-        'Quit command to exit the program'
+        """
+        Exits the program
+        """
         return True
 
     def do_EOF(self, some_arg):
-        'EOF command to quit the program'
+        """
+        Exits the program
+        """
         self.do_quit()
 
     def emptyline(self):
-        # use pass to not repeat anything
+        """
+        Do nothing when the user inputs an empty line
+        """
         pass
+
+    def classes(self):
+        """
+        This method lists all available classes in the program.
+        """
+        for name, obj in inspect.getmembers(sys.modules[__name__]):
+            if inspect.isclass(obj):
+                self.our_classes.append(obj.__name__)
+                print(obj.__name__)
 
 
 def process_argument(some_arg):
+    """
+    Parses the user input and returns the arguments as a list
+    """
     args = split(some_arg)
     return args
 
