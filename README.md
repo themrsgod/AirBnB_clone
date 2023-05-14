@@ -1,1 +1,1 @@
-# AirBnB_clone
+# AirBnB_clone is a project undertaken by Vivian and Moses.
