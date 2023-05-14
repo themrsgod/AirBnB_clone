@@ -2,7 +2,16 @@
 """Defines the HBnB console."""
 import cmd
 import sys
+import re
 import inspect
+import models
+from models.base_model import BaseModel
+from models.user import User
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 from shlex import split
 
 
@@ -16,14 +25,10 @@ class HBNBCommand(cmd.Cmd):
     # Define the prompt string for the command-line interface
     prompt = "(hbnb) "
 
-    def default(self, some_args):
-        """
-        This method is called when a command is not recognized.
-
-        This method lists all available classes in the program, allowing the user to choose one to operate on.
-        """
-        self.our_classes = []
-        self.classes()
+    __our_classes = [
+        'User',
+        'BaseModel', 'Place', 'City', 'Review', 'State', 'Amenity'
+    ]
 
     def do_create(self, some_arg):
         """
@@ -33,10 +38,10 @@ class HBNBCommand(cmd.Cmd):
         argument = process_argument(some_arg)
         if len(argument) == 0:
             print("** class name missing **")
-        elif argument[0] not in self.our_classes:
+        elif argument[0] not in self.__our_classes:
             print("** class doesn't exist **")
         else:
-            storage.save()
+            models.storage.save()
             # eval extracts the object type from string then creates the object and gets the id.
             the_id = eval(argument[0])().id
             print(the_id)
@@ -49,14 +54,14 @@ class HBNBCommand(cmd.Cmd):
         argument = process_argument(some_arg)
         if len(argument) == 0:
             print("** class name missing **")
-        elif argument[0] not in self.our_classes:
+        elif argument[0] not in self.__our_classes:
             print("** class doesn't exist **")
         elif len(argument) < 2:
             print("** instance id missing **")
-        elif "{}.{}".format(argument[0], argument[1]) not in storage.all():
+        elif "{}.{}".format(argument[0], argument[1]) not in models.storage.all():
             print("** no instance found **")
         else:
-            stored_items = storage.all()
+            stored_items = models.storage.all()
             index = "{}.{}".format(argument[0], argument[1])
             item_at_id = stored_items[index]
             print(item_at_id)
@@ -69,18 +74,18 @@ class HBNBCommand(cmd.Cmd):
         argument = process_argument(some_arg)
         if len(argument) == 0:
             print("** class name missing **")
-        elif argument[0] not in self.our_classes:
+        elif argument[0] not in self.__our_classes:
             print("** class doesn't exist **")
         elif len(argument) < 2:
             print("** instance id missing **")
-        elif "{}.{}".format(argument[0], argument[1]) not in storage.all():
+        elif "{}.{}".format(argument[0], argument[1]) not in models.storage.all():
             print("** no instance found **")
         else:
-            stored_items = storage.all()
+            stored_items = models.storage.all()
             index = "{}.{}".format(argument[0], argument[1])
             item_at_id = stored_items[index]
             del (item_at_id)
-            storage.save()
+            models.storage.save()
 
     def do_all(self, some_arg):
         """
@@ -92,7 +97,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         else:
             list_of_instances = []
-            for item in storage.all().values():
+            for item in models.storage.all().values():
                 list_of_instances.append(item.__str__())
             print(list_of_instances)
 
@@ -102,12 +107,12 @@ class HBNBCommand(cmd.Cmd):
         Ex: update BaseModel 1234-1234-1234 email "aibnb@holbertonschool.com"
         """
         argument = process_argument(some_arg)
-        object_dictionary = storage.all()
+        object_dictionary = models.storage.all()
 
         if len(argument) == 0:
             print("** class name missing **")
             return False
-        if argument[0] not in HBNBCommand.__classes:
+        if argument[0] not in self.__our_classes:
             print("** class doesn't exist **")
             return False
         if len(argument) == 1:
