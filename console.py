@@ -83,6 +83,45 @@ class HBNBCommand(cmd.Cmd):
             del(item_at_id)
             storage.save()
     
+    def do_all(self, some_arg):
+        """
+        all: Prints all string representation of all instances 
+        based or not on the class name.
+        """
+        argument = process_argument(some_arg)
+        if len(argument) == 0:
+            print("** class name missing **")
+        else:
+            list_of_instances = []
+            for item in storage.all().values():
+                list_of_instances.append(item.__str__())
+            print(list_of_instances)
+
+    def do_update(self, some_arg):
+        """
+        """
+        argument = process_argument(some_arg)
+        if len(argument) == 0:
+            print("** class name missing **")
+        elif argument[0] not in self.our_classes:
+            print("** class doesn't exist **")
+        elif len(argument) < 2:
+            print("** instance id missing **")
+        elif "{}.{}".format(argument[0],argument[1]) not in storage.all():
+            print("** no instance found **")
+        elif len(argument) < 3:
+            print("** attribute name missing **")
+        elif len(argument) < 4:
+            print("** value missing **")
+        else:
+            obj = storage.all()
+            index =  "{}.{}".format(argument[0],argument[1])
+            obj_to_update = obj[index]
+            if argument[2] in obj_to_update.keys():
+                value_type = type(obj_to_update.__class__.__dict__[argument[2]])
+
+
+
     def do_quit(self, some_arg):
         'Quit command to exit the program'
         return True
