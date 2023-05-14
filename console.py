@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
-import cmd, sys, inspect
+import cmd
+import sys
+import inspect
 from shlex import split
+
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -12,9 +15,11 @@ class HBNBCommand(cmd.Cmd):
 
     def classes(self):
         self.our_classes.clear()
-        current_module = sys.modules[__name__] # get all modules in current package
-        for name, obj in inspect.getmembers(sys.modules[__name__]): # loop over the modules
-            if inspect.isclass(obj): # check if its a class
+        # get all modules in current package
+        current_module = sys.modules[__name__]
+        # loop over the modules
+        for name, obj in inspect.getmembers(sys.modules[__name__]):
+            if inspect.isclass(obj):  # check if its a class
                 self.our_classes.append(str(obj))
                 # save to out classes list
 
@@ -34,10 +39,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             storage.save()
-            the_id = eval(argument[0])().id # eval extracts the object type from string then creates the object and gets the id.
+            # eval extracts the object type from string then creates the object and gets the id.
+            the_id = eval(argument[0])().id
             print(the_id)
 
-    
     def do_show(self, some_arg):
         """
         show: Prints the string representation of an instance 
@@ -50,14 +55,14 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(argument) < 2:
             print("** instance id missing **")
-        elif "{}.{}".format(argument[0],argument[1]) not in storage.all():
+        elif "{}.{}".format(argument[0], argument[1]) not in storage.all():
             print("** no instance found **")
         else:
             stored_items = storage.all()
-            index =  "{}.{}".format(argument[0],argument[1])
+            index = "{}.{}".format(argument[0], argument[1])
             item_at_id = stored_items[index]
             print(item_at_id)
-        
+
     def do_destroy(self, some_arg):
         """
         destroy: Deletes an instance based on the class name and id 
@@ -70,15 +75,15 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         elif len(argument) < 2:
             print("** instance id missing **")
-        elif "{}.{}".format(argument[0],argument[1]) not in storage.all():
+        elif "{}.{}".format(argument[0], argument[1]) not in storage.all():
             print("** no instance found **")
         else:
             stored_items = storage.all()
-            index =  "{}.{}".format(argument[0],argument[1])
+            index = "{}.{}".format(argument[0], argument[1])
             item_at_id = stored_items[index]
-            del(item_at_id)
+            del (item_at_id)
             storage.save()
-    
+
     def do_all(self, some_arg):
         """
         all: Prints all string representation of all instances 
@@ -98,33 +103,32 @@ class HBNBCommand(cmd.Cmd):
         Updates an instance based on the class name and id by adding or updating attribute.
         """
         argument = process_argument(some_arg)
-        argl = parse(arg)
-        objdict = storage.all()
+        object_dictionary = storage.all()
 
-        if len(argl) == 0:
+        if len(argument) == 0:
             print("** class name missing **")
             return False
-        if argl[0] not in HBNBCommand.__classes:
+        if argument[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
             return False
-        if len(argl) == 1:
+        if len(argument) == 1:
             print("** instance id missing **")
             return False
-        if "{}.{}".format(argl[0], argl[1]) not in objdict.keys():
+        if "{}.{}".format(argument[0], argument[1]) not in object_dictionary.keys():
             print("** no instance found **")
             return False
-        if len(argl) == 2:
+        if len(argument) == 2:
             print("** attribute name missing **")
             return False
-        if len(argl) == 3:
+        if len(argument) == 3:
             try:
-                type(eval(argl[2])) != dict
+                type(eval(argument[2])) != dict
             except NameError:
                 print("** value missing **")
                 return False
-        elif type(eval(argl[2])) == dict:
-            obj = objdict["{}.{}".format(argl[0], argl[1])]
-            for k, v in eval(argl[2]).items():
+        elif type(eval(argument[2])) == dict:
+            obj = object_dictionary["{}.{}".format(argument[0], argument[1])]
+            for k, v in eval(argument[2]).items():
                 if (k in obj.__class__.__dict__.keys() and
                         type(obj.__class__.__dict__[k]) in {str, int, float}):
                     valtype = type(obj.__class__.__dict__[k])
@@ -133,25 +137,23 @@ class HBNBCommand(cmd.Cmd):
                     obj.__dict__[k] = v
         storage.save()
 
-
-
     def do_quit(self, some_arg):
         'Quit command to exit the program'
         return True
-    
+
     def do_EOF(self, some_arg):
         'EOF command to quit the program'
         self.do_quit()
-    
+
     def emptyline(self):
         # use pass to not repeat anything
         pass
+
 
 def process_argument(some_arg):
     args = split(some_arg)
     return args
 
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
-
