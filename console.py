@@ -95,26 +95,43 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, some_arg):
         """
+        Updates an instance based on the class name and id by adding or updating attribute.
         """
         argument = process_argument(some_arg)
-        if len(argument) == 0:
+        argl = parse(arg)
+        objdict = storage.all()
+
+        if len(argl) == 0:
             print("** class name missing **")
-        elif argument[0] not in self.our_classes:
+            return False
+        if argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
-        elif len(argument) < 2:
+            return False
+        if len(argl) == 1:
             print("** instance id missing **")
-        elif "{}.{}".format(argument[0],argument[1]) not in storage.all():
+            return False
+        if "{}.{}".format(argl[0], argl[1]) not in objdict.keys():
             print("** no instance found **")
-        elif len(argument) < 3:
+            return False
+        if len(argl) == 2:
             print("** attribute name missing **")
-        elif len(argument) < 4:
-            print("** value missing **")
-        else:
-            obj = storage.all()
-            index =  "{}.{}".format(argument[0],argument[1])
-            obj_to_update = obj[index]
-            if argument[2] in obj_to_update.keys():
-                value_type = type(obj_to_update.__class__.__dict__[argument[2]])
+            return False
+        if len(argl) == 3:
+            try:
+                type(eval(argl[2])) != dict
+            except NameError:
+                print("** value missing **")
+                return False
+        elif type(eval(argl[2])) == dict:
+            obj = objdict["{}.{}".format(argl[0], argl[1])]
+            for k, v in eval(argl[2]).items():
+                if (k in obj.__class__.__dict__.keys() and
+                        type(obj.__class__.__dict__[k]) in {str, int, float}):
+                    valtype = type(obj.__class__.__dict__[k])
+                    obj.__dict__[k] = valtype(v)
+                else:
+                    obj.__dict__[k] = v
+        storage.save()
 
 
 
