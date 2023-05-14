@@ -3,10 +3,6 @@
 import cmd, sys, inspect
 from shlex import split
 
-def process_argument(some_arg):
-    args = split(some_arg)
-    return args
-
 class HBNBCommand(cmd.Cmd):
     """
     contains the entry point of the command interpreter
@@ -134,5 +130,11 @@ class HBNBCommand(cmd.Cmd):
         # use pass to not repeat anything
         pass
 
+def process_argument(some_arg):
+    args = split(some_arg)
+    return args
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
+
+
