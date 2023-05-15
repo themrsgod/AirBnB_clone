@@ -151,22 +151,14 @@ class HBNBCommand(cmd.Cmd):
         """
         Exits the program
         """
-        self.do_quit()
+        print("")
+        return True
 
     def emptyline(self):
         """
         Do nothing when the user inputs an empty line
         """
         pass
-
-    def classes(self):
-        """
-        This method lists all available classes in the program.
-        """
-        for name, obj in inspect.getmembers(sys.modules[__name__]):
-            if inspect.isclass(obj):
-                self.our_classes.append(obj.__name__)
-                print(obj.__name__)
 
 
 def process_argument(some_arg):
