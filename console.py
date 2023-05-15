@@ -14,8 +14,26 @@ from models.review import Review
 
 
 def parse(arg):
+    """
+    This function takes a string as input and parses it into a list of arguments.
+    If the input string contains a dictionary or a list enclosed within curly braces or
+    square brackets, the function extracts the string contained within the braces and appends
+    it to the list of arguments.
+
+    Args:
+    arg (str): The input string to be parsed
+
+    Returns:
+    A list of arguments with the dictionary or list (if present) appended to it
+    """
+
+    # Search for a dictionary enclosed within curly braces
     curly_braces = re.search(r"\{(.*?)\}", arg)
+
+    # Search for a list enclosed within square brackets
     brackets = re.search(r"\[(.*?)\]", arg)
+
+    # If neither dictionary nor list is found, split the string into arguments
     if curly_braces is None:
         if brackets is None:
             return [i.strip(",") for i in split(arg)]
