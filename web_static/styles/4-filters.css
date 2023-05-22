@@ -18,6 +18,10 @@
     align-items: center;
     justify-content: center;
     display: flex;
-    padding-right: 30px;
-    opacity: 90%;
+    margin-right: 30px;
+    opacity: 1;
+}
+
+.filters button:hover{
+    opacity: 0.9;
 }
